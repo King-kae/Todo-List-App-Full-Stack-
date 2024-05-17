@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from "yup";
+import { useNavigate } from 'react-router-dom';
+import { useMutation } from "@tanstack/react-query"
+import { signup } from "../../Helpers/authService"
 import { Button } from "@mui/material"
 import IconButton from "@mui/material/IconButton"
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
@@ -52,7 +55,32 @@ const MyCheckBox = ({ children, ...props }) => {
   )
 }
 
-const Signup = () => {
+const SignupForm = () => {
+  const {data, isLoading, error, mutateAsync} = useMutation({
+    mutationFn: signup
+  })
+
+  const signupHandler = async () => {
+    const request = await signup(data)
+    console.log(request)
+
+  }
+  const navigate = useNavigate()
+
+  const sendForm = async (e) => {
+    const formData = new FormData(event.target);
+    console.log(formData)
+    const userData = Object.fromEntries(formData);
+    console.log(userData.acceptedTerms)
+    try{
+      await mutateAsync(userData)
+      navigate("/login")
+      alert("user accepted")
+      console.log("User signed in successfully")
+    } catch(error){
+      console.log(error.message)
+    }
+  }
 
   return (
     <>
@@ -71,7 +99,6 @@ const Signup = () => {
         </IconButton>
       </div>
       <Formik
-
         initialValues={{
           username: '',
           email: '',
@@ -80,18 +107,8 @@ const Signup = () => {
           acceptedTerms: false
         }}
         validationSchema={validationSchema}
-        onSubmit={(values, actions) => {
-
-
-          setTimeout(() => {
-
-            alert(JSON.stringify(values, null, 2));
-
-            actions.setSubmitting(false);
-
-          }, 1000);
-
-        }}
+        onSubmit={sendForm}
+        
       >
 
         <Form>
@@ -119,12 +136,16 @@ const Signup = () => {
             id="confirmPassword"
             type="password"
           />
-          <MyCheckBox name="acceptedTerms">
+          <MyCheckBox name="acceptedTerms" >
             {" "}I accept the terms and conditions
           </MyCheckBox>
-
-          <Button type="submit" variant='contained'>
-            Submit
+         
+          <Button 
+            type="submit" 
+            variant='contained'
+            onClick={signupHandler}
+          >
+            {isLoading ? "Submitting" : "Submit"}
           </Button>
         </Form>
       </Formik>
@@ -132,4 +153,4 @@ const Signup = () => {
   );
 };
 
-export default Signup
+export default SignupForm

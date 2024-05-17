@@ -22,7 +22,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.get('/', (req, res) => {
-    res.send('Welcome Home')
+    res.json('Welcome to Todo server!')
 })
 app.use('/auth', userRoute)
 app.use('/todo', passport.authenticate('jwt', {session: false }) , todoRoute)

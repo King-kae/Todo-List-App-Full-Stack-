@@ -28,25 +28,31 @@ passport.use(
     'signup',
     new LocalStrategy(
         {
-            usernameField: 'username',
+            usernameField: 'email',
             passwordField: 'password',
             passReqToCallback: true,
         },
-        async (req, username, password, done) => {
+        async (req, email, password, done) => {
             try {
                 const res = req.res
-                const { email } = req.body
+                const { username, confirmPassword } = req.body
 
-                if(!email || !password || !username){
+                if(!email || !password || !username || !confirmPassword){
                     return res.status(400).json({ message: 'All fields are required' })
                 }
 
-                const existingUser = await User.findOne({ email, username })
+                const existingUser = await User.findOne({ email  })
                 if (existingUser) {
+                    console.log('User already exists')
                     return res.status(400).json({ message: 'User already exists!. Login instead' })
                 }
+
+                if (password !== confirmPassword) {
+                    return res.status(400).json({ message: 'Passwords do not match' })
+                }
+
                 const hashPassword = await bcrypt.hash(password, 10)
-                return console.log(req.body)
+                // return console.log(req.body)
                 const user = await User.create({ email, username, password: hashPassword })
             
                 return done(null, user)

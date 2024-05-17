@@ -1,5 +1,7 @@
 import React from 'react';
+import axios from 'axios';
 import { motion } from "framer-motion"
+import { useQuery } from "@tanstack/react-query"
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { Button } from "@mui/material"
 
@@ -20,10 +22,34 @@ const letterContainer = {
     },
 };
 
+const Data = async () => {
+   await fetch("http://localhost:3000/")
+        .then((res) => res.json())
+        .then(data => console.log(data))
+
+}
+
+const FetchData = async () => {
+    const { data } = await fetch('http://localhost:3000/')
+        return await data.json()
+}
+
 const Home = () => {
     const text1 = "Hello";
     const text2 = "Welcome to Todolist App";
     const text3 = "What Would You like to do?";
+    
+    const { isPending, error, data } = useQuery({
+        queryKey: ["Home"],
+        queryFn: async () =>{
+            const { data }= await axios.get('http://localhost:3000/')
+            return data
+        }
+    })
+      if (isPending) return 'Loading...'
+    
+      if (error) return 'An error has occurred: ' + error.message
+    
 
     return (
         <div className='flex items-center'>
@@ -68,22 +94,26 @@ const Home = () => {
                             animate="show"
                             exit="exit"
                         >
-                    
+
                             <Button endIcon={<ArrowForwardRoundedIcon />}
                                 component="a"
                                 href="/signup"
-                                variant='filled'
-                                className='blue'
                             >
                                 Get started
+                            </Button>
+                            <Button
+                                component="a"
+                                href='/login'
+                            >
+                                Already have an account? Login
                             </Button>
                         </motion.div>
                     </motion.div>
                 </div>
                 <div>
-                    <div className='bg-black w-[45%] fixed right-5 h-[12.5rem] top-[15%] md:w-[35%] md:top-[10.5%] md:right-0 md:h-screen '>
+                    <h1>{data}</h1>
+                    {/* <h2><Data /></h2> */}
 
-                    </div>
                 </div>
             </div>
         </div>

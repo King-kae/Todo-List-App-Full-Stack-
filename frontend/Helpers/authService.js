@@ -10,12 +10,12 @@ export const signup = async (data) => {
     .then((res) => res.data)
 };
 
-// export const signupHandler = async (obj, navigate, statusCallback, errorCallback) => {
-//     try {
-//         const req = await signup(obj)
-//         statusCallback(req.status)
-//         setTimeout(() => navigate('/'), 1000)
-//     } catch (err) {
-//         errorCallback(err.message)
-//     }
-// }
+export const signupHandler = async (data, navigate, statusCallback, errorCallback) => {
+    try {
+        const req = await signup(data)
+        statusCallback(req.status)
+        setTimeout(() => navigate('/'), 1000)
+    } catch (err) {
+        errorCallback(err)
+    }
+}

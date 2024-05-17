@@ -81,11 +81,20 @@ const logout = async (req, res) => {
     }
   };
   
-
+const getAllUser = async(req, res ) => {
+     await User.find({})
+    .then((users) => {
+        res.send(users)
+    })
+    .catch((err) => {
+        console.log(err)
+    });
+}
 
 module.exports = {
     signup,
     login,
-    logout
+    logout,
+    getAllUser
 }
 
