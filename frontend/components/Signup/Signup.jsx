@@ -60,11 +60,7 @@ const SignupForm = () => {
     mutationFn: signup
   })
 
-  const signupHandler = async () => {
-    const request = await signup(data)
-    console.log(request)
-
-  }
+  console.log(data)
   const navigate = useNavigate()
 
   const sendForm = async (e) => {
@@ -74,9 +70,12 @@ const SignupForm = () => {
     console.log(userData.acceptedTerms)
     try{
       await mutateAsync(userData)
-      navigate("/login")
-      alert("user accepted")
+      console.log(userData)
+      console.log(data)
+      if (userData.statusCode === 200){
+        navigate("/login")
       console.log("User signed in successfully")
+      } 
     } catch(error){
       console.log(error.message)
     }
@@ -143,7 +142,6 @@ const SignupForm = () => {
           <Button 
             type="submit" 
             variant='contained'
-            onClick={signupHandler}
           >
             {isLoading ? "Submitting" : "Submit"}
           </Button>

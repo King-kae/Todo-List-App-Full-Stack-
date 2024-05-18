@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useCookies } from "react-cookie"
+import { useNavigate } from "react-router-dom";
+import { useMutation } from '@tanstack/react-query';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { login } from "../../Helpers/authService"
 
 const Login = () => {
+    const [cookies] = useCookies(["jwt"])
+    const navigate = useNavigate()
+    const { data, isLoading, mutateAsync } = useMutation({ mutationFn: login })
+
+    // useEffect(() => {
+    //     if (cookies.jwt) {
+    //         navigate("/")
+    //     }
+    // }, [cookies, navigate])
+
+    
   return (
     <Formik
       initialValues={{ email: '', password: '' }}
@@ -12,12 +27,22 @@ const Login = () => {
             .required('Required'),
         password: Yup.string().required("Incorrect password")
       })}
-      onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
-      }}
+      onSubmit={ async (e) => {
+        const formData = new FormData(event.target);
+    console.log(formData)
+    const userData = Object.fromEntries(formData);
+        try{
+            await mutateAsync(userData)
+            console.log('User signed in successfully')
+            console.log(userData)
+            
+
+        } catch(error) {
+            console.log(error)
+            console.log(error.response.data.message)
+        }
+    }
+}
     >
       <Form>
         <label htmlFor="email">Email Address</label>
@@ -28,7 +53,7 @@ const Login = () => {
         <Field name="password" type="password" id="password" />
         <ErrorMessage name="password" />
 
-        <button type="submit">Submit</button>
+        <button type="submit">{isLoading ? "Submitting" : "Submit"}</button>
       </Form>
     </Formik>
   );
