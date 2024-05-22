@@ -28,12 +28,12 @@ const Login = () => {
             })}
             onSubmit={async (e, { setSubmitting }) => {
                 const formData = new FormData(event.target);
-                console.log(formData)
                 const userData = Object.fromEntries(formData);
                 try {
                     await mutateAsync(userData)
                     console.log('User signed in successfully')
                     console.log(userData)
+                    navigate("/profile")
                     // if (response.status === 200) {
                     //     navigate("/")
                     // }

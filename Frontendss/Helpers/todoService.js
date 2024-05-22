@@ -5,3 +5,26 @@ export const getTodos = async () => {
     return data;
 };
 
+export const addTodo = async (todo) => {
+    await axios
+        .post('http://localhost:3000/todo', 
+        todo, 
+        { withCredentials: true }
+    )
+    return data;
+}
+
+export const updateTodo = async (todo, id) => {
+    await axios
+        .put(`http://localhost:3000/todo/update/${id}`, 
+        { title : todo }, 
+        { withCredentials: true }
+    )
+}
+
+export const deleteTodo = async (id) => {
+    await axios
+        .delete(`http://localhost:3000/todo/${id}`, 
+        { withCredentials: true }
+    )
+}

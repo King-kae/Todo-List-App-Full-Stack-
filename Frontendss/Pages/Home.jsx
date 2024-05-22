@@ -47,7 +47,7 @@ const Home = () => {
             height={118}
         />
     
-      if (error) return 'An error has occurred: ' + error.message
+    if (error) return 'An error has occurred: ' + error.message
     
 
     return (
@@ -105,6 +105,12 @@ const Home = () => {
                                 href='/login'
                             >
                                 Already have an account? Login
+                            </Button>
+                            <Button
+                                component="a"
+                                href='/profile'
+                            >
+                                Profile
                             </Button>
                             <h1 className="text-blue ">{data}</h1>
                         </motion.div>
