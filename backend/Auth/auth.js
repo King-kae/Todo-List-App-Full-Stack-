@@ -68,16 +68,16 @@ passport.use(
     'login',
     new LocalStrategy(
         {
-            usernameField: 'username',
+            usernameField: 'email',
             passwordField: 'password',
             passReqToCallback: true,
         },
-        async (req, username, password, done) => {
+        async (req, email, password, done) => {
             try {
                 const res = req.res
-                const { email } = req.body
                 
-                const user = await User.findOne({ email, username})
+                
+                const user = await User.findOne({ email })
                 if(!user) {
                     return res.status(404).send({ message: 'User not found'})
                 }

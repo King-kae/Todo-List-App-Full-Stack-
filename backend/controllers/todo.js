@@ -12,11 +12,13 @@ const getTodoById = async (req, res) => {
   res.status(200).json({ todo, message: "get todo" });
 };
 
-const saveTodo = async (req, res) => {
+
+// Create a new todo
+const addTodo = async (req, res) => {
   try {
-    const todos = new Todo(req.body);
-    await todos.save();
-    res.status(201).json({ todos, message: "post todo success" });
+    const todos = req.body
+    await Todo.create(todos);
+    res.status(201).json({ todos, message: "Created a todo successfully" });
   } catch (error) {
     console.log(error.message, "error in saveTodo");
   }
@@ -24,12 +26,13 @@ const saveTodo = async (req, res) => {
 
 const updateTodo = async (req, res) => {
   try {
-    await Todo.findByIdAndUpdate(
-      req.params.id,
-      { title: req.body.title },
+    const title = req.body
+    const id = req.params.id
+    const todos = await Todo.findByIdAndUpdate(
+      id,
+      title,
       { new: true }
     );
-    const todos = await Todo.find({});
     res.status(201).json({ todos, message: "update todo success" });
   } catch (error) {
     console.log(error.message, "error in saveTodo");
@@ -38,7 +41,7 @@ const updateTodo = async (req, res) => {
 
 const deleteTodo = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     await Todo.findByIdAndDelete(id);
     res.status(200).json({ message: "delete todo success" });
   } catch (error) {
@@ -48,7 +51,7 @@ const deleteTodo = async (req, res) => {
 
 const completedTodo = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const todo = await Todo.findById(id);
     todo.completed= !todo.completed;
     todo.save();
@@ -64,7 +67,7 @@ const completedTodo = async (req, res) => {
 module.exports = {
     getTodos,
     getTodoById,
-    saveTodo,
+    addTodo,
     updateTodo,
     deleteTodo,
     completedTodo

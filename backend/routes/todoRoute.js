@@ -1,7 +1,7 @@
 const {
     getTodos,
     getTodoById,
-    saveTodo,
+    addTodo,
     deleteTodo,
     updateTodo,
     completedTodo,
@@ -11,7 +11,7 @@ const router = require("express").Router();
 
 router.get("/all", getTodos);
 router.get("/:id", getTodoById);
-router.post("/", saveTodo);
+router.post("/", addTodo);
 router.put("/update/:id", updateTodo);
 router.delete("/:id", deleteTodo);
 router.put("/completed/:id", completedTodo);

@@ -1,7 +1,7 @@
 const User = require('../models/userModel')
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
-const maxAge = 3 * 24 * 60 * 60;
+const maxAge =  1 * 24 * 60 * 60;
 
 
 require('../Auth/auth') // Middleware for authentication and authorization
@@ -46,7 +46,7 @@ const login = async(req, res, next) => {
                     if (error) return next(error)
                 
                     const body = { _id: user._id, username: user.username }
-                    const token = jwt.sign({ user: body }, process.env.JWT_SECRET_KEY, { expiresIn: '8h'})
+                    const token = jwt.sign({ user: body }, process.env.JWT_SECRET_KEY, { expiresIn: '1h'})
                     console.log(token)
                     res.cookie("jwt", token, {
                         httpOnly: false,
@@ -81,20 +81,27 @@ const logout = async (req, res) => {
     }
   };
   
-const getAllUser = async(req, res ) => {
-     await User.find({})
-    .then((users) => {
-        res.send(users)
-    })
-    .catch((err) => {
+const getUser = async(req, res ) => {
+    try{
+        const username = req.params.username;
+        const user = await User.findOne({username}).select("-password")
+        if(user) {
+        console.log("users", user)
+        res.json(user)
+
+        } else {
+            res.status(404).json({ message: 'User not found' })
+        console.log("No user found")
+        };
+    } catch (err) {
         console.log(err)
-    });
+    }
 }
 
 module.exports = {
     signup,
     login,
     logout,
-    getAllUser
+    getUser
 }
 
