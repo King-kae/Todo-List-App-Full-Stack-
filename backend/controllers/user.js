@@ -1,7 +1,7 @@
 const User = require('../models/userModel')
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
-const maxAge =  1 * 24 * 60 * 60;
+// const maxAge =  1 * 24 * 60 * 60;
 
 
 require('../Auth/auth') // Middleware for authentication and authorization
@@ -21,13 +21,14 @@ const signup = async(req, res, next) => {
         res.cookie("jwt", token, {
             withCredentials: true,
             httpOnly: false,
-            maxAge: maxAge * 1000,
+            // maxAge: maxAge * 1000,
+            expiresIn: "8h",
           });
-        // console.log(user)
+        console.log('User created successfully')
         return res.status(201).json({ 
             success: true,
-            data: user, token,
-            message: 'User created successfully' 
+            user:{_id, email, username}, 
+            token, 
         })
     })(req, res, next)
 }
@@ -50,14 +51,14 @@ const login = async(req, res, next) => {
                     console.log(token)
                     res.cookie("jwt", token, {
                         httpOnly: false,
-                        maxAge: maxAge * 1000,
+                        // maxAge: maxAge * 1000,
+                        expiresIn: "8h",
                       });
-                    // return next(user, null)
+                     console.log('User logged in successfully')
                     return res.status(200).json({ 
                         success: true,
-                        data: token,
-                        user,
-                        message: 'User logged in successfully' 
+                        user: { id: user._id, username: user.username, email: user.email },
+                        token,    
                     })
                 })
             
@@ -79,7 +80,23 @@ const logout = async (req, res) => {
     } catch (error) {
       console.log(error.message, "error in logout controller");
     }
-  };
+};
+
+const updateUser = async (req, res) => {
+    const username = req.params.username;
+    const user = await User.findOneAndUpdate({ username })
+    if (user) {
+        user.username = req.body.username
+        user.email = req.body.email
+    } else{
+        res.status(404).send({
+            message: "User not found"
+        })
+    }
+
+    const updatedUser = await user.save()
+    return res.status(200).send({ data: updatedUser })
+}
   
 const getUser = async(req, res ) => {
     try{
@@ -102,6 +119,7 @@ module.exports = {
     signup,
     login,
     logout,
+    updateUser,
     getUser
 }
 

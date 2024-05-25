@@ -79,7 +79,7 @@ passport.use(
                 
                 const user = await User.findOne({ email })
                 if(!user) {
-                    return res.status(404).send({ message: 'User not found'})
+                    return res.status(404).send({ status: false, message: 'User not found'})
                 }
 
                 const validate = await user.verifyPassword(password)
